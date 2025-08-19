@@ -1,0 +1,41 @@
+# 安装基本库
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y git clang cmake autoconf automake build-essential libtool python3 python3-pip openjdk-17-jdk unzip
+
+# 创建 Android SDK 目录
+mkdir -p $HOME/Android/Sdk
+export ANDROID_HOME=$HOME/Android/Sdk
+
+# 下载命令行工具
+wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+unzip commandlinetools-linux-*.zip -d $ANDROID_HOME/cmdline-tools
+mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+
+# 添加环境变量
+echo 'export ANDROID_HOME=$HOME/Android/Sdk' >> ~/.bashrc
+echo 'export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+source ~/.bashrc
+
+# 接受许可协议
+yes | sdkmanager --licenses
+
+# 安装必要组件
+sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" "ndk;25.2.9519653"
+
+# 安装go 
+wget -c https://go.dev/dl/go1.23.3.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.3.linux-amd64.tar.gz
+echo "PATH=$PATH:/usr/local/go/bin"  >> ~/.bashrc
+source ~/.bashrc
+
+# 编译sing-box
+git clone https://github.com/SagerNet/sing-box.git
+cd sing-box
+make lib_install
+export PATH=$PATH:$HOME/go/bin/
+make lib_android
+
+# 编译sing-box-for-android
+copy libbox.aar to sing-box-for-android/app/libs/
+用andorid studio 进行编译
